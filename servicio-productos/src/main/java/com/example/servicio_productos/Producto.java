@@ -10,12 +10,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Document(collection = "productos")
-public class ProductoEntity {
+public class Producto {
     @Id
     private String id;
     private String nombre;
-    private int cantidad;
-    private double precio;
+    private int cantidad= 0;
+    private double precio = 0.0;
     private List<Ingrediente> ingredientes;
 
     // Getters y setters
@@ -26,7 +26,7 @@ public class ProductoEntity {
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
     public double getCantidad() { return cantidad; }
-    public void setCantidad(double cantidad) { this.cantidad = cantidad; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
     public List<Ingrediente> getIngredientes() { return ingredientes; }
     public void setIngredientes(List<Ingrediente> ingredientes) { this.ingredientes = ingredientes; }
 }

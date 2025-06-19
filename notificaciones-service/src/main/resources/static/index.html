@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real-Time Notifications</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+  <h1>Real-Time Notifications</h1>
+
+  <div id="mensajes"></div>
+
+  <script>
+    let stompClient = null;
+
+    const socket = new SockJS("/ws");
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+      console.log("✅ Conectado: " + frame);
+      stompClient.subscribe('/topic/notifications', function (msg) {
+        try {
+          const parsed = JSON.parse(msg.body);
+          const mensaje = parsed.message;
+
+          const pre = document.createElement("pre");
+          pre.textContent = mensaje;
+          document.getElementById("mensajes").appendChild(pre);
+        } catch (e) {
+          console.error("❌ Error al procesar el mensaje:", e);
+        }
+      });
+    }, function (error) {
+      console.error("❌ Error de conexión:", error);
+    });
+  </script>
+</body>
+</html>

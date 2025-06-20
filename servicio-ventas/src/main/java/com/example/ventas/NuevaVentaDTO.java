@@ -3,11 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.example.ventas.dto;
+package com.example.ventas;
 
-import com.example.ventas.model.Orden;
-import com.example.ventas.model.MetodoPago;
-
+import com.example.ventas.Orden;
+import com.example.ventas.MetodoPago;
 import java.util.Date;
 
 public class NuevaVentaDTO {

@@ -4,10 +4,10 @@
  */
 package com.example.ventas;
 
-import com.example.ventas.dto.NuevaVentaDTO;
+import com.example.ventas.NuevaVentaDTO;
 import com.example.ventas.exception.VentaException;
-import com.example.ventas.model.Venta;
-import com.example.ventas.repository.VentaRepository;
+import com.example.ventas.Venta;
+import com.example.ventas.VentaRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -4,8 +4,6 @@
  */
 package com.example.ventas;
 
-package com.example.ventas.model;
-
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,6 +12,7 @@ import java.util.Date;
 
 @Document(collection = "ventas")
 public class Venta {
+
     @Id
     private ObjectId id;
     private ObjectId idOrden;
@@ -22,14 +21,69 @@ public class Venta {
     private Date fechaVenta;
     private Double total;
 
-    // Constructores, getters y setters
+    // Constructor vacío
     public Venta() {
     }
 
-    // ... (todos los getters y setters como en tu código original)
-}
+    // Getters y setters
 
-// Enumeración para MétodoPago
-enum MetodoPago {
-    EFECTIVO, TARJETA_CREDITO, TARJETA_DEBITO, TRANSFERENCIA
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
+    public ObjectId getIdOrden() {
+        return idOrden;
+    }
+
+    public void setIdOrden(ObjectId idOrden) {
+        this.idOrden = idOrden;
+    }
+
+    public int getNumeroVenta() {
+        return numeroVenta;
+    }
+
+    public void setNumeroVenta(int numeroVenta) {
+        this.numeroVenta = numeroVenta;
+    }
+
+    public MetodoPago getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+    public Date getFechaVenta() {
+        return fechaVenta;
+    }
+
+    public void setFechaVenta(Date fechaVenta) {
+        this.fechaVenta = fechaVenta;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    @Override
+    public String toString() {
+        return "Venta{" +
+                "id=" + id +
+                ", idOrden=" + idOrden +
+                ", numeroVenta=" + numeroVenta +
+                ", metodoPago=" + metodoPago +
+                ", fechaVenta=" + fechaVenta +
+                ", total=" + total +
+                '}';
+    }
 }

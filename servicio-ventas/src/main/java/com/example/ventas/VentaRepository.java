@@ -4,7 +4,7 @@
  */
 package com.example.ventas;
 
-import com.example.ventas.model.Venta;
+import com.example.ventas.Venta;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

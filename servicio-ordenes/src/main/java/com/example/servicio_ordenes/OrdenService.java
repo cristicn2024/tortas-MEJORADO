@@ -5,11 +5,11 @@
 
 package com.example.servicio_ordenes;
 
-import com.tu.paquete.model.Orden;
-import com.tu.paquete.dto.NuevaOrdenDTO;
-import com.tu.paquete.exception.FindException;
-import com.tu.paquete.exception.PersistenciaException;
-import com.tu.paquete.repository.OrdenRepository;
+import com.example.servicio_ordenes.Orden;
+import dtos.NuevaOrdenDTO;
+import exception.FindException;
+import exception.PersistenciaException;
+import com.example.servicio_ordenes.OrdenRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class OrdenService {
      * @return una lista de todas las órdenes almacenadas
      * @throws FindException si ocurre algún error al buscar las órdenes
      */
-    public List<Orden> obtenerOrdenes() throws FindException {
+    public List<clases.Orden> obtenerOrdenes() throws FindException {
         return ordenRepository.obtenerOrdenes();
     }
 
@@ -41,7 +41,7 @@ public class OrdenService {
      * @return la orden registrada
      * @throws PersistenciaException si ocurre algún error durante la persistencia de la orden
      */
-    public Orden registrarOrden(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
+    public clases.Orden registrarOrden(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
         return ordenRepository.registrarOrden(ordenDTO);
     }
 
@@ -71,7 +71,7 @@ public class OrdenService {
      *
      * @return una lista de las órdenes completadas
      */
-    public List<Orden> obtenerOrdenesCompletadas() {
+    public List<clases.Orden> obtenerOrdenesCompletadas() {
         return ordenRepository.obtenerOrdenesCompletadas();
     }
 
@@ -82,7 +82,7 @@ public class OrdenService {
      * @return la orden encontrada
      * @throws PersistenciaException si ocurre algún error durante la búsqueda de la orden
      */
-    public Orden obtenerOrdenPorNumeroOrden(Integer numeroOrden) throws PersistenciaException {
+    public clases.Orden obtenerOrdenPorNumeroOrden(Integer numeroOrden) throws PersistenciaException {
         return ordenRepository.obtenerOrdenPorNumeroOrden(numeroOrden);
     }
 
@@ -93,7 +93,7 @@ public class OrdenService {
      * @return la orden cancelada
      * @throws PersistenciaException si ocurre algún error durante la cancelación de la orden
      */
-    public Orden cancelarOrden(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
+    public clases.Orden cancelarOrden(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
         return ordenRepository.cancelarOrden(ordenDTO);
     }
 
@@ -120,7 +120,7 @@ public class OrdenService {
      *
      * @return una lista de órdenes pendientes
      */
-    public List<Orden> obtenerOrdenesPendientes() {
+    public List<clases.Orden> obtenerOrdenesPendientes() {
         return ordenRepository.obtenerOrdenesPendientes();
     }
 
@@ -129,7 +129,7 @@ public class OrdenService {
      *
      * @return una lista de órdenes pendientes ordenadas por la cantidad de tortas
      */
-    public List<Orden> obtenerOrdenesPendientesPorCantidadTortas() {
+    public List<clases.Orden> obtenerOrdenesPendientesPorCantidadTortas() {
         return ordenRepository.obtenerOrdenesPendientesPorCantidadTortas();
     }
 
@@ -138,7 +138,7 @@ public class OrdenService {
      *
      * @return una lista de órdenes ordenadas por fecha ascendente
      */
-    public List<Orden> obtenerOrdenesPorFechaAscendente() {
+    public List<clases.Orden> obtenerOrdenesPorFechaAscendente() {
         return ordenRepository.obtenerOrdenesPorFechaAscendente();
     }
 

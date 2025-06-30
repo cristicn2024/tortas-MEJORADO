@@ -2,25 +2,42 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+package dtos;
 
-package com.example.ventas;
-
-import com.example.ventas.Orden;
-import com.example.ventas.MetodoPago;
+import enums.MetodoPago;
 import java.util.Date;
+import dtos.NuevaOrdenDTO;
 
 public class NuevaVentaDTO {
-    private Orden orden;
+    private int id;
+    private NuevaOrdenDTO orden;
     private MetodoPago metodoPago;
     private Date fechaVenta;
     private Double total;
 
-    // Getters y Setters
-    public Orden getOrden() {
+    public NuevaVentaDTO() {
+    }
+
+    public NuevaVentaDTO(NuevaOrdenDTO orden, MetodoPago metodoPago, Date fechaVenta, Double total) {
+        this.orden = orden;
+        this.metodoPago = metodoPago;
+        this.fechaVenta = fechaVenta;
+        this.total = total;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+    
+    public NuevaOrdenDTO getOrden() {
         return orden;
     }
 
-    public void setOrden(Orden orden) {
+    public void setOrden(NuevaOrdenDTO orden) {
         this.orden = orden;
     }
 
@@ -47,4 +64,12 @@ public class NuevaVentaDTO {
     public void setTotal(Double total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "NuevaVentaDTO{" + "orden=" + orden + ", metodoPago=" + metodoPago + ", fechaVenta=" + fechaVenta + ", total=" + total + '}';
+    }
+
+    
+    
 }

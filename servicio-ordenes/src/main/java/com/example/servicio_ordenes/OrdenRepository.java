@@ -3,17 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.example.servicio_ordenes
+package com.example.servicio_ordenes;
 
-import com.tu.paquete.model.Orden;
-import com.tu.paquete.model.Estado;
-import com.tu.paquete.dto.NuevaOrdenDTO;
-import com.tu.paquete.dto.NuevoProductoDTO;
-import com.tu.paquete.dto.TortaDTO;
-import com.tu.paquete.model.Producto;
-import com.tu.paquete.model.Ingrediente;
-import com.tu.paquete.exception.FindException;
-import com.tu.paquete.exception.PersistenciaException;
+import clases.Orden;
+import enums.Estado;
+import dtos.NuevaOrdenDTO;
+import dtos.NuevoProductoDTO;
+import dtos.TortaDTO;
+import clases.Producto;
+import clases.Ingrediente;
+import exception.FindException;
+import exception.PersistenciaException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -72,7 +72,7 @@ public class OrdenRepository {
             orden.setListaProductos(productos);
             orden.setTotal(ordenDTO.getTotal());
             orden.setFecha(ordenDTO.getFecha());
-            orden.setEstado(ordenDTO.getEstado());
+            orden.setEstado(Estado.PENDIENTE);
 
             Orden ordenGuardada = mongoTemplate.save(orden, COLLECTION_NAME);
             logger.info("Se insertó la orden: {}", ordenGuardada.toString());
@@ -206,12 +206,12 @@ public class OrdenRepository {
             Orden ordenEncontrada = obtenerOrdenPorNumeroOrden(ordenDTO.getNumeroOrden());
             
             Query query = new Query(Criteria.where("id").is(ordenEncontrada.getId()));
-            Update update = new Update().set("estado", "CANCELADA");
+            Update update = new Update().set("estado", "CANCELADO");
             
             mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
             
             logger.info("Orden cancelada con éxito: {}", ordenEncontrada.toString());
-            ordenEncontrada.setEstado(Estado.CANCELADA);
+            ordenEncontrada.setEstado(Estado.CANCELADO);
             
             // Restaurar inventario
             for (Producto producto : ordenEncontrada.getListaProductos()) {
@@ -266,11 +266,11 @@ public class OrdenRepository {
     public void cambiarEstadoCompletada(int numeroOrden) {
         try {
             Query query = new Query(Criteria.where("numeroOrden").is(numeroOrden));
-            Update update = new Update().set("estado", Estado.COMPLETADA.toString());
+            Update update = new Update().set("estado", Estado.LISTO.toString());
             mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
-            logger.info("Orden {} marcada como completada", numeroOrden);
+            logger.info("Orden {} marcada como lista", numeroOrden);
         } catch (Exception ex) {
-            logger.error("Error al cambiar estado a completada", ex);
+            logger.error("Error al cambiar estado a lista", ex);
         }
     }
 
@@ -282,11 +282,43 @@ public class OrdenRepository {
     public void cambiarEstadoCancelada(int numeroOrden) {
         try {
             Query query = new Query(Criteria.where("numeroOrden").is(numeroOrden));
-            Update update = new Update().set("estado", Estado.CANCELADA.toString());
+            Update update = new Update().set("estado", Estado.CANCELADO.toString());
             mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
             logger.info("Orden {} marcada como cancelada", numeroOrden);
         } catch (Exception ex) {
             logger.error("Error al cambiar estado a cancelada", ex);
+        }
+    }
+    
+     /**
+     * Cambia el estado de una orden a cancelada mediante su número de orden.
+     *
+     * @param numeroOrden el número de la orden que se desea marcar como cancelada
+     */
+    public void cambiarEstadoEntregado(int numeroOrden) {
+        try {
+            Query query = new Query(Criteria.where("numeroOrden").is(numeroOrden));
+            Update update = new Update().set("estado", Estado.ENTREGADO.toString());
+            mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
+            logger.info("Orden {} marcada como entregado", numeroOrden);
+        } catch (Exception ex) {
+            logger.error("Error al cambiar estado a entregado", ex);
+        }
+    }
+    
+     /**
+     * Cambia el estado de una orden a cancelada mediante su número de orden.
+     *
+     * @param numeroOrden el número de la orden que se desea marcar como cancelada
+     */
+    public void cambiarEstadoPreparacion(int numeroOrden) {
+        try {
+            Query query = new Query(Criteria.where("numeroOrden").is(numeroOrden));
+            Update update = new Update().set("estado", Estado.PREPARACION.toString());
+            mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
+            logger.info("Orden {} marcada como en preparacion", numeroOrden);
+        } catch (Exception ex) {
+            logger.error("Error al cambiar estado a en preparacion", ex);
         }
     }
 

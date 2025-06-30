@@ -2,17 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
-package com.example.ventas;
+package exception;
 
 /**
- * Estado de una orden.
+ *
+ * @author crist
  */
-public enum Estado {
-    PENDIENTE,
-    PREPARACION,
-    LISTO,
-    ENTREGADO,
-    CANCELADO
+public class VentaException extends Exception {
+    public VentaException(String mensaje) {
+        super(mensaje);
+    }
 }
 

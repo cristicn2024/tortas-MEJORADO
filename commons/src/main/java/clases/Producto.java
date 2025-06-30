@@ -2,14 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+package clases;
 
-package com.example.ventas;
+import java.util.List;
 
 /**
  *
  * @author crist
  */
-import java.util.List;
+
 
 public class Producto {
     private String id;

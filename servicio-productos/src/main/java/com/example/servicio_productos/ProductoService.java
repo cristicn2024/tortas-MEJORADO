@@ -4,8 +4,6 @@
  */
 package com.example.servicio_productos;
 
-import com.example.servicio_productos.exception.FindException;
-import com.example.servicio_productos.exception.PersistenciaException;
 import com.example.servicio_productos.ProductoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

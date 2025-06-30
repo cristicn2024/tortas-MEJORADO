@@ -4,8 +4,8 @@
  */
 package com.example.ventas;
 
-import com.example.ventas.NuevaVentaDTO;
-import com.example.ventas.exception.VentaException;
+import dtos.NuevaVentaDTO;
+import exception.VentaException;
 import com.example.ventas.Venta;
 import com.example.ventas.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;

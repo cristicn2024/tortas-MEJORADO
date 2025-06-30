@@ -3,26 +3,63 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.example.ventas;
+package com.example.servicio_ordenes;
 
-/**
- *
- * @author crist
- */
-import java.util.List;
+import clases.Producto;
+import enums.Estado;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.bson.types.ObjectId;
+
 import java.util.Date;
+import java.util.List;
 
+@Document(collection = "ordenes")
 public class Orden {
 
-    private String id;
+    @Id
+    private ObjectId id;
+    
+    @Field("numeroOrden")
     private int numeroOrden;
+    
+    @Field("total")
     private float total;
+    
+    @Field("listaProductos")
     private List<Producto> listaProductos;
+    
+    @Field("nombreCliente")
     private String nombreCliente;
+    
+    @Field("estado")
     private Estado estado;
+    
+    @Field("fecha")
     private Date fecha;
 
     public Orden() {
+    }
+
+    // Constructor con parámetros principales
+    public Orden(int numeroOrden, float total, List<Producto> listaProductos, 
+                 String nombreCliente, Estado estado, Date fecha) {
+        this.numeroOrden = numeroOrden;
+        this.total = total;
+        this.listaProductos = listaProductos;
+        this.nombreCliente = nombreCliente;
+        this.estado = estado;
+        this.fecha = fecha;
+    }
+
+    // Getters y Setters
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public int getNumeroOrden() {
@@ -73,18 +110,10 @@ public class Orden {
         this.fecha = fecha;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Override
     public String toString() {
         return "Orden{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", numeroOrden=" + numeroOrden +
                 ", total=" + total +
                 ", listaProductos=" + listaProductos +
@@ -92,5 +121,24 @@ public class Orden {
                 ", estado=" + estado +
                 ", fecha=" + fecha +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        Orden orden = (Orden) obj;
+        return numeroOrden == orden.numeroOrden && 
+               Float.compare(orden.total, total) == 0 &&
+               id != null ? id.equals(orden.id) : orden.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + numeroOrden;
+        result = 31 * result + (total != +0.0f ? Float.floatToIntBits(total) : 0);
+        return result;
     }
 }

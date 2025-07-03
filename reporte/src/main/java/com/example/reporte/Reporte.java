@@ -2,111 +2,141 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package com.example.reporte;
 
-import com.example.reporte.defectos.Defecto;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.util.Date;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-/*
- * Entidad que representa un reporte dentro del sistema.
- *
- * Esta clase se mapea a la tabla "reporte" en la base de datos y contiene la
- * información principal de un reporte, como su identificador, lote, inspector,
- * fecha, costo total, usuario asociado y los defectos relacionados.
- *
- * La fecha se asigna automáticamente al momento de persistir un nuevo registro,
- * mediante el método anotado con @PrePersist.
- *
- * Los defectos asociados están definidos como una relación OneToMany con cascada
- * para asegurar que las operaciones sobre el reporte afecten también a los defectos
- * relacionados, permitiendo manejo de creación, actualización y eliminación en cascada.
- *
- * Se usan anotaciones de Lombok para generar automáticamente getters, setters,
- * constructores sin y con argumentos, así como el patrón builder para facilitar
- * la creación de instancias.
- *
- * @author Ramos
- */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Entity
-@Table(name = "reporte")
+import java.time.LocalDate;
+import java.util.List;
+
+@Document(collection = "reportes")
 public class Reporte {
 
-    /**
-     * Identificador único del reporte, generado automáticamente.
-     */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idReporte")
-    private Long idReporte;
+    private String id;
 
-    /**
-     * Identificador del lote al que pertenece el reporte.
-     */
-    @Column(name = "loteId", nullable = false)
-    private String loteId;
+    private LocalDate fechaGeneracion;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
 
-    /**
-     * Nombre del inspector que realizó el reporte.
-     */
-    @Column(name = "inspector", nullable = false)
-    private String inspector;
+    private int totalVentas;
+    private double totalGanado;
 
-    /**
-     * Fecha y hora en que se creó el reporte. Se asigna automáticamente al
-     * persistir el registro.
-     */
-    @Column(name = "fecha", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fecha;
+    private List<DetalleVenta> detalleVentas;
 
-    /**
-     * Método que se ejecuta antes de persistir el reporte para asignar la fecha
-     * actual automáticamente.
-     */
-    @PrePersist
-    protected void onCreate() {
-        fecha = new Date();
+    // Constructor vacío
+    public Reporte() {
     }
 
-    /**
-     * Costo total acumulado del reporte.
-     */
-    @Column(name = "costoTotal", nullable = false)
-    private Double costoTotal;
+    // Constructor completo
+    public Reporte(LocalDate fechaGeneracion, LocalDate fechaInicio, LocalDate fechaFin,
+                   int totalVentas, double totalGanado, List<DetalleVenta> detalleVentas) {
+        this.fechaGeneracion = fechaGeneracion;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.totalVentas = totalVentas;
+        this.totalGanado = totalGanado;
+        this.detalleVentas = detalleVentas;
+    }
 
-    /**
-     * Identificador del usuario que generó el reporte.
-     */
-    @Column(name = "idUsuario", nullable = false)
-    private Long idUsuario;
+    // Getters y Setters
 
-    /**
-     * Lista de defectos asociados al reporte. Se usa cascada para propagar
-     * operaciones y orphanRemoval para eliminar defectos huérfanos cuando se
-     * quitan de la lista.
-     */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Defecto> defectos;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public LocalDate getFechaGeneracion() {
+        return fechaGeneracion;
+    }
+
+    public void setFechaGeneracion(LocalDate fechaGeneracion) {
+        this.fechaGeneracion = fechaGeneracion;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public int getTotalVentas() {
+        return totalVentas;
+    }
+
+    public void setTotalVentas(int totalVentas) {
+        this.totalVentas = totalVentas;
+    }
+
+    public double getTotalGanado() {
+        return totalGanado;
+    }
+
+    public void setTotalGanado(double totalGanado) {
+        this.totalGanado = totalGanado;
+    }
+
+    public List<DetalleVenta> getDetalleVentas() {
+        return detalleVentas;
+    }
+
+    public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
+        this.detalleVentas = detalleVentas;
+    }
+
+    // Clase interna para representar los detalles de cada venta (puedes moverla a su propia clase si prefieres)
+    public static class DetalleVenta {
+        private String idVenta;
+        private LocalDate fecha;
+        private double total;
+
+        public DetalleVenta() {
+        }
+
+        public DetalleVenta(String idVenta, LocalDate fecha, double total) {
+            this.idVenta = idVenta;
+            this.fecha = fecha;
+            this.total = total;
+        }
+
+        public String getIdVenta() {
+            return idVenta;
+        }
+
+        public void setIdVenta(String idVenta) {
+            this.idVenta = idVenta;
+        }
+
+        public LocalDate getFecha() {
+            return fecha;
+        }
+
+        public void setFecha(LocalDate fecha) {
+            this.fecha = fecha;
+        }
+
+        public double getTotal() {
+            return total;
+        }
+
+        public void setTotal(double total) {
+            this.total = total;
+        }
+    }
 }
+

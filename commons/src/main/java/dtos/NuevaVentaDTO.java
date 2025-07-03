@@ -5,20 +5,20 @@
 package dtos;
 
 import enums.MetodoPago;
-import java.util.Date;
+import java.time.LocalDate;
 import dtos.NuevaOrdenDTO;
 
 public class NuevaVentaDTO {
     private int id;
     private NuevaOrdenDTO orden;
     private MetodoPago metodoPago;
-    private Date fechaVenta;
+    private LocalDate fechaVenta;
     private Double total;
 
     public NuevaVentaDTO() {
     }
 
-    public NuevaVentaDTO(NuevaOrdenDTO orden, MetodoPago metodoPago, Date fechaVenta, Double total) {
+    public NuevaVentaDTO(NuevaOrdenDTO orden, MetodoPago metodoPago, LocalDate fechaVenta, Double total) {
         this.orden = orden;
         this.metodoPago = metodoPago;
         this.fechaVenta = fechaVenta;
@@ -49,11 +49,11 @@ public class NuevaVentaDTO {
         this.metodoPago = metodoPago;
     }
 
-    public Date getFechaVenta() {
+    public LocalDate getFechaVenta() {
         return fechaVenta;
     }
 
-    public void setFechaVenta(Date fechaVenta) {
+    public void setFechaVenta(LocalDate fechaVenta) {
         this.fechaVenta = fechaVenta;
     }
 

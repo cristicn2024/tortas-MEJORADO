@@ -1,17 +1,15 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package com.example.ventas;
+ */package com.example.ventas;
 
 import dtos.NuevaVentaDTO;
 import exception.VentaException;
-import com.example.ventas.Venta;
-import com.example.ventas.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -42,5 +40,14 @@ public class VentaController {
     @GetMapping("/count")
     public ResponseEntity<Long> contarVentas() {
         return ResponseEntity.ok(ventaService.contarVentas());
+    }
+
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<NuevaVentaDTO>> obtenerVentasPorFechas(
+            @RequestParam LocalDate desde,
+            @RequestParam LocalDate hasta) {
+        
+        List<NuevaVentaDTO> ventas = ventaService.obtenerVentasPorRango(desde, hasta);
+        return ResponseEntity.ok(ventas);
     }
 }

@@ -4,14 +4,6 @@
  */
 package com.example.reporte;
 
-import com.example.reporte.defectos.DefectoDTO;
-import java.util.Date;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 /*
  * Objeto de transferencia de datos (DTO) para la entidad Reporte.
  *
@@ -26,41 +18,67 @@ import lombok.Setter;
  * Utiliza anotaciones Lombok para generar automáticamente los métodos
  * getters, setters, constructores sin y con argumentos.
  *
- * @author Ramos
+ * @author cristi
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+import java.time.LocalDate;
+import java.util.List;
+
 public class ReporteDTO {
 
-    /**
-     * Identificador único del reporte.
-     */
-    private Long idReporte;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private int totalVentas;
+    private double totalGanado;
+    private List<DetalleVentaDTO> detalleVentas;
 
-    /**
-     * Identificador del lote asociado al reporte.
-     */
-    private String loteId;
+    public ReporteDTO() {
+    }
 
-    /**
-     * Nombre del inspector que realizó el reporte.
-     */
-    private String inspector;
+    public ReporteDTO(LocalDate fechaInicio, LocalDate fechaFin, int totalVentas, double totalGanado, List<DetalleVentaDTO> detalleVentas) {
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.totalVentas = totalVentas;
+        this.totalGanado = totalGanado;
+        this.detalleVentas = detalleVentas;
+    }
 
-    /**
-     * Costo total calculado del reporte, sumando costos de defectos y piezas.
-     */
-    private Double costoTotal;
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
 
-    /**
-     * Fecha en que se realizó el reporte.
-     */
-    private Date fecha;
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
 
-    /**
-     * Lista de defectos asociados al reporte, representados como objetos DTO.
-     */
-    private List<DefectoDTO> defectos;
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public int getTotalVentas() {
+        return totalVentas;
+    }
+
+    public void setTotalVentas(int totalVentas) {
+        this.totalVentas = totalVentas;
+    }
+
+    public double getTotalGanado() {
+        return totalGanado;
+    }
+
+    public void setTotalGanado(double totalGanado) {
+        this.totalGanado = totalGanado;
+    }
+
+    public List<DetalleVentaDTO> getDetalleVentas() {
+        return detalleVentas;
+    }
+
+    public void setDetalleVentas(List<DetalleVentaDTO> detalleVentas) {
+        this.detalleVentas = detalleVentas;
+    }
 }

@@ -41,25 +41,10 @@ spring:
           predicates:
             - Path=/api/v1/usuarios/**
 
-        - id: reportes
-          uri: lb://REPORTES
+        - id: servicio-productos
+          uri: lb://SERVICIO´PRODUCTOS
           predicates:
-            - Path=/api/v1/reportes/**
-
-        - id: defectos
-          uri: lb://REPORTES
-          predicates:
-            - Path=/api/v1/defectos/**
-
-        - id: piezas
-          uri: lb://REPORTES
-          predicates:
-            - Path=/api/v1/piezas/**
-
-        - id: tipo-defectos
-          uri: lb://REPORTES
-          predicates:
-            - Path=/api/v1/tipo-defectos/**
+            - Path=/api/v1/productos/**
 
         - id: servicio-ordenes
           uri: lb://SERVICIO-ORDENES

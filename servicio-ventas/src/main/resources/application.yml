@@ -6,7 +6,7 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: servicio_ventas
+      database: tortasSallela
 
   autoconfigure:
     exclude:

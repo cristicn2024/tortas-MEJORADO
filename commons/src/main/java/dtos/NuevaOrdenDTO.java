@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 public class NuevaOrdenDTO {
+    
+    private int id;
     private int numeroOrden;
     private float total;
     private List<NuevoProductoDTO> listaProductos;
@@ -30,6 +32,13 @@ public class NuevaOrdenDTO {
         this.fecha = fecha;
     }
 
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id){
+        this.id = id;
+    }
 
     public int getNumeroOrden() {
         return numeroOrden;

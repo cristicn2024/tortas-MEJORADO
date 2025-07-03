@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Document(collection = "ventas")
 public class Venta {
@@ -19,7 +19,7 @@ public class Venta {
     private ObjectId idOrden;
     private int numeroVenta;
     private MetodoPago metodoPago;
-    private Date fechaVenta;
+    private LocalDate fechaVenta;
     private Double total;
 
     // Constructor vacío
@@ -60,11 +60,11 @@ public class Venta {
         this.metodoPago = metodoPago;
     }
 
-    public Date getFechaVenta() {
+    public LocalDate getFechaVenta() {
         return fechaVenta;
     }
 
-    public void setFechaVenta(Date fechaVenta) {
+    public void setFechaVenta(LocalDate fechaVenta) {
         this.fechaVenta = fechaVenta;
     }
 

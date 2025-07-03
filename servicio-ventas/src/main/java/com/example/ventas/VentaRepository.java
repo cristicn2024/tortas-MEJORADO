@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Repository
 public interface VentaRepository extends MongoRepository<Venta, ObjectId> {
@@ -18,4 +19,6 @@ public interface VentaRepository extends MongoRepository<Venta, ObjectId> {
     Venta findByNumeroVenta(int numeroVenta);
     
     long count();
+    
+    List<Venta> findByFechaVentaBetween(LocalDate desde, LocalDate hasta);
 }

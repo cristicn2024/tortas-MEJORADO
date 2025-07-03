@@ -27,4 +27,19 @@ public class Notificacion {
      */
     private String message;
 
+    public Notificacion(){
+        
+    }
+    
+    public Notificacion(String message){
+        this.message = message;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

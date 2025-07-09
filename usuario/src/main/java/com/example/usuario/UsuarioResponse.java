@@ -25,7 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UsuarioResponse {
 
-    private Long idUsuario;
+    private String idUsuario;
     private String username;
     private String password;
 }

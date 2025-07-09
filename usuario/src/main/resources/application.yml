@@ -1,6 +1,12 @@
 spring:
   application:
     name: usuarios
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: tortasSallea
+
     
   config:
     import: optional:configserver:http://localhost:8888

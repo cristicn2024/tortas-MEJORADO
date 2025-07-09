@@ -4,51 +4,71 @@
  */
 package com.example.usuario;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-/**
- * Entidad JPA que representa un usuario en la base de datos.
- *
- * <p>Contiene información básica como nombre completo, nombre de usuario y contraseña.</p>
- *
- * <p>Está mapeada a la tabla <code>usuario</code> y utiliza estrategias de generación automática para su ID.</p>
- * 
- * <p>Incluye anotaciones de Lombok para facilitar el acceso y construcción del objeto.</p>
- * 
- * @author Ramos
- */
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Data
-@Entity
-@Table(name = "usuario")
+@Document(collection = "usuario")
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idUsuario")
-    private Long idUsuario;
-
-    @Column(name = "fullName", nullable = false)
+    private String idUsuario;
     private String fullName;
-
-    @Column(name = "username", nullable = false, unique = true)
     private String username;
-
-    @Column(name = "password", nullable = false)
     private String password;
+
+    // Constructor vacío
+    public Usuario() {
+    }
+
+    // Constructor con todos los campos
+    public Usuario(String idUsuario, String fullName, String username, String password) {
+        this.idUsuario = idUsuario;
+        this.fullName = fullName;
+        this.username = username;
+        this.password = password;
+    }
+
+    // Getters y Setters
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // toString
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "idUsuario='" + idUsuario + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

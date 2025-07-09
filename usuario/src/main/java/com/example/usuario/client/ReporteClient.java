@@ -28,6 +28,6 @@ public interface ReporteClient {
      * @param idUsuario ID del usuario
      * @return lista de reportes asociados
      */
-    @GetMapping("/usuario/{idUsuario}")
-    List<Reporte> findAllReportesByUsuario(@PathVariable("idUsuario") Long idUsuario);
+    @GetMapping("/api/v1/reportes/por-usuario/{idUsuario}")
+    List<Reporte> findAllReportesByUsuario(@PathVariable("idUsuario") String idUsuario);
 }

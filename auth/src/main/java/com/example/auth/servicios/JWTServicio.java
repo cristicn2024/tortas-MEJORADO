@@ -4,6 +4,7 @@
  */
 package com.example.auth.servicios;
 
+import com.example.auth.config.DetallesUsuario;
 import com.example.auth.dto.UsuarioResponse;
 import com.example.auth.feign.UsuarioClient;
 import io.jsonwebtoken.Claims;
@@ -14,8 +15,10 @@ import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,71 +35,160 @@ import org.springframework.stereotype.Component;
 @Component
 public class JWTServicio {
 
-    // Clave secreta en Base64 utilizada para firmar/verificar los JWTs (debe mantenerse segura)
+    // Clave secreta en Base64 utilizada para firmar/verificar los JWTs
     private static final String SECRET = "A213SD331213313332132DA213SD331213313332132D";
 
-    // Cliente Feign que permite comunicarse con el microservicio de usuarios
+    // Validez del token en segundos (30 minutos)
+    private static final int JWT_TOKEN_VALIDITY = 30 * 60;
+
     @Autowired
     private UsuarioClient usuarioClient;
 
     /**
-     * Valida un token JWT asegurando que esté correctamente firmado y que no
-     * haya expirado.
+     * Obtiene el nombre de usuario desde el token JWT.
      *
-     * @param token El token JWT a validar.
-     * @return Un objeto Jws<Claims> que contiene los claims del token si es
-     * válido.
+     * @param token Token JWT
+     * @return Nombre de usuario
      */
-    public Jws<Claims> validateToken(final String token) {
-        return Jwts.parser() // Crea un parser para analizar el JWT
-                .verifyWith(getSignKey()) // Verifica la firma con la clave secreta
-                .build()
-                .parseSignedClaims(token); // Parsea el token y extrae los claims firmados
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
     }
 
     /**
-     * Genera un token JWT con el nombre de usuario como sujeto y el ID del
-     * usuario como claim. El token tiene una duración de 30 minutos.
+     * Obtiene la fecha de expiración del token JWT.
      *
-     * @param username El nombre de usuario del cual se quiere generar el token.
-     * @return Un token JWT firmado.
+     * @param token Token JWT
+     * @return Fecha de expiración
+     */
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    /**
+     * Obtiene un claim específico del token JWT.
+     *
+     * @param token Token JWT
+     * @param claimsResolver Función para obtener el claim
+     * @return Claim solicitado
+     */
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+
+    /**
+     * Obtiene todos los claims del token JWT.
+     *
+     * @param token Token JWT
+     * @return Claims del token
+     */
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    /**
+     * Verifica si el token JWT ha expirado.
+     *
+     * @param token Token JWT
+     * @return true si el token ha expirado, false en caso contrario
+     */
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
+    /**
+     * Genera un token JWT para un usuario específico.
+     *
+     * @param userDetails Detalles del usuario autenticado
+     * @return Token JWT generado
+     */
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+
+        // Obtener información adicional del usuario desde el microservicio
+        try {
+            UsuarioResponse usuario = usuarioClient.findByUsername(userDetails.getUsername());
+            claims.put("userId", usuario.getIdUsuario());
+        } catch (Exception e) {
+            System.out.println("Error al obtener información del usuario: " + e.getMessage());
+            // Continuar sin el userId si hay error
+        }
+
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    /**
+     * Genera un token JWT con username (método de compatibilidad).
+     *
+     * @param username Nombre de usuario
+     * @return Token JWT generado
      */
     public String generateToken(String username) {
-        // Obtener usuario desde el microservicio de usuarios
-        UsuarioResponse usuario = usuarioClient.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", usuario.getIdUsuario()); // userId como Long
 
+        // Obtener información adicional del usuario desde el microservicio
+        try {
+            UsuarioResponse usuario = usuarioClient.findByUsername(username);
+            claims.put("userId", usuario.getIdUsuario());
+        } catch (Exception e) {
+            System.out.println("Error al obtener información del usuario: " + e.getMessage());
+        }
+
+        return createToken(claims, username);
+    }
+
+    /**
+     * Crea el token JWT con los claims y el subject especificados.
+     *
+     * @param claims Claims adicionales
+     * @param subject Subject del token (username)
+     * @return Token JWT creado
+     */
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .claims(claims)
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // Fecha de expiración (30 minutos)
+                .subject(subject)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(getSignKey())
                 .compact();
     }
 
     /**
-     * Obtiene el ID del usuario consultando al microservicio de usuarios
-     * mediante Feign.
+     * Valida si el token JWT es válido para el usuario especificado.
      *
-     * @param username El nombre de usuario.
-     * @return El ID del usuario asociado al nombre de usuario.
-     * @throws RuntimeException si el usuario no es encontrado.
+     * @param token Token JWT
+     * @param userDetails Detalles del usuario
+     * @return true si el token es válido, false en caso contrario
      */
-    private Long obtenerUserIdPorUsername(String username) {
-        UsuarioResponse response = usuarioClient.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return response.getIdUsuario();
+    public Boolean validateToken(String token, DetallesUsuario userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     /**
-     * Convierte la clave secreta codificada en Base64 a un objeto SecretKey
-     * para firmar/verificar los JWT.
+     * Valida solo si el token JWT no ha expirado y está bien formado.
      *
-     * @return Clave secreta como objeto SecretKey.
+     * @param token Token JWT
+     * @return true si el token es válido, false en caso contrario
+     */
+    public Boolean validateToken(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Convierte la clave secreta codificada en Base64 a un objeto SecretKey.
+     *
+     * @return Clave secreta como objeto SecretKey
      */
     private SecretKey getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);

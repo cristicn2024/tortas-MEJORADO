@@ -42,7 +42,7 @@ spring:
             - Path=/api/v1/usuarios/**
 
         - id: servicio-productos
-          uri: lb://SERVICIO´PRODUCTOS
+          uri: lb://SERVICIO-PRODUCTOS
           predicates:
             - Path=/api/v1/productos/**
 

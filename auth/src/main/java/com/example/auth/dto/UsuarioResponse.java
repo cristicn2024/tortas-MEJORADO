@@ -27,23 +27,23 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UsuarioResponse {
 
-    private Long idUsuario;
+    private String idUsuario;
     private String username;
     private String password;
     
     public UsuarioResponse() {}
 
-    public UsuarioResponse(Long idUsuario, String username, String password) {
+    public UsuarioResponse(String idUsuario, String username, String password) {
         this.idUsuario = idUsuario;
         this.username = username;
         this.password = password;
     }
 
-    public Long getIdUsuario() {
+    public String getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(Long idUsuario) {
+    public void setIdUsuario(String idUsuario) {
         this.idUsuario = idUsuario;
     }
 

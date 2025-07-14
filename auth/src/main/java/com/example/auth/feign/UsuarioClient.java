@@ -35,7 +35,7 @@ public interface UsuarioClient {
      * existe, vacío si no.
      */
     @GetMapping("/api/v1/usuarios/username/{username}")
-    Optional<UsuarioResponse> findByUsername(@PathVariable String username);
+    UsuarioResponse findByUsername(@PathVariable String username);
 
     /**
      * Crea un nuevo usuario enviando un objeto {@link UsuarioRequest}.
@@ -46,4 +46,7 @@ public interface UsuarioClient {
      */
     @PostMapping("/api/v1/usuarios")
     ResponseEntity createUsuario(@RequestBody UsuarioRequest usuarioRequest);
+    
+
+
 }

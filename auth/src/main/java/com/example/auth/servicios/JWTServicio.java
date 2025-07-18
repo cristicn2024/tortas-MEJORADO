@@ -10,8 +10,11 @@ import com.example.auth.feign.UsuarioClient;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import org.springframework.beans.factory.annotation.Value;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +38,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JWTServicio {
 
-    // Clave secreta en Base64 utilizada para firmar/verificar los JWTs
-    private static final String SECRET = "A213SD331213313332132DA213SD331213313332132D";
+    
+    private String secret = "oB1jA3uQ5zC8rM7nV2eK4pF9wX6tY0dL";
+
 
     // Validez del token en segundos (30 minutos)
     private static final int JWT_TOKEN_VALIDITY = 30 * 60;
@@ -83,11 +87,11 @@ public class JWTServicio {
      * @return Claims del token
      */
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(getSignKey())
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     /**
@@ -151,11 +155,11 @@ public class JWTServicio {
      */
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .claims(claims)
-                .subject(subject)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(getSignKey())
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -191,7 +195,7 @@ public class JWTServicio {
      * @return Clave secreta como objeto SecretKey
      */
     private SecretKey getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+    return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+}
+
 }

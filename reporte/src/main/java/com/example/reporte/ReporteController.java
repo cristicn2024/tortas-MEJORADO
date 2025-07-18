@@ -4,10 +4,7 @@
  */
 package com.example.reporte;
 
-import com.example.reporte.FiltroReporteDTO;
-import com.example.reporte.ReporteService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-/**
- * Controlador REST que expone los endpoints relacionados con reportes.
- */
 @RestController
 @RequestMapping(path = "/api/v1/reportes")
 public class ReporteController {
@@ -29,8 +23,15 @@ public class ReporteController {
     }
 
     @PostMapping("/generar")
-    public ResponseEntity<byte[]> generarReporte(@RequestBody FiltroReporteDTO filtro) throws IOException {
-        byte[] pdf = reporteService.generarReportePDF(filtro.getFechaInicio(), filtro.getFechaFin());
+    public ResponseEntity<byte[]> generarReporte(
+        @RequestBody FiltroReporteDTO filtro,
+        @RequestHeader("Authorization") String authorizationHeader) throws IOException {
+
+        byte[] pdf = reporteService.generarReportePDF(
+                filtro.getFechaInicio(),
+                filtro.getFechaFin(),
+                authorizationHeader // <- PASAMOS el token
+        );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -40,4 +41,6 @@ public class ReporteController {
                 .headers(headers)
                 .body(pdf);
     }
+
+
 }

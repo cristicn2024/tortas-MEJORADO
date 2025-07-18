@@ -25,7 +25,7 @@ public class JWTServicio {
      * Clave secreta codificada en Base64 que se usa para firmar y validar los
      * tokens JWT.
      */
-    private static final String SECRET = "A213SD331213313332132DA213SD331213313332132D";
+    private static final String SECRET = "oB1jA3uQ5zC8rM7nV2eK4pF9wX6tY0dL";
 
     /**
      * Valida el token JWT recibido y retorna sus claims si es válido.

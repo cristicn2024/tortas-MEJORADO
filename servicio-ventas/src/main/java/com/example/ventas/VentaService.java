@@ -63,4 +63,9 @@ public class VentaService {
     public long contarVentas() {
         return ventaRepository.count();
     }
+    
+    public List<Venta> obtenerVentasEntreFechas(LocalDate desde, LocalDate hasta) {
+        return ventaRepository.findByFechaVentaBetween(desde, hasta);
+    }
+
 }

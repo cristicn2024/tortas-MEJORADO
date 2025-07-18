@@ -55,7 +55,7 @@ spring:
           uri: lb://SERVICIO-VENTAS
           predicates:
             - Path=/api/v1/ventas/**
-
+            
         - id: frontend
           uri: lb://FRONTEND
           predicates:

@@ -25,6 +25,13 @@
     </properties>
 
     <dependencies>
+        <!-- pdf -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.30</version>
+        </dependency>
+        
         <!-- Exposición de controladores REST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

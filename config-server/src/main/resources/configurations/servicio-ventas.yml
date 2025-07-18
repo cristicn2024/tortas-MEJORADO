@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: servicio-ventas
+
 eureka:
   client:
     service-url:
@@ -23,4 +24,3 @@ logging:
   level:
     com.example.servicio_ordenes: DEBUG
     org.springframework.web: INFO
-

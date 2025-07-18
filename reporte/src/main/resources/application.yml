@@ -1,10 +1,16 @@
 spring:
   application:
     name: reportes
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: tortasSallela
+
     
   config:
     import: optional:configserver:http://localhost:8888
     
 servicio:
   ventas:
-    url: http://localhost:8081
+    url: http://SERVICIO-VENTAS

@@ -10,7 +10,9 @@ import exception.PersistenciaException;
 import dtos.NuevaOrdenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,4 +33,54 @@ public class OrdenController {
             throws PersistenciaException {
         return ordenService.registrarOrden(ordenDTO);
     }
+  
+    @GetMapping("/completadas")
+    public List<clases.Orden> obtenerOrdenesCompletadas() {
+        return ordenService.obtenerOrdenesCompletadas();
+    }
+
+    @GetMapping("/pendientes")
+    public List<clases.Orden> obtenerOrdenesPendientes() {
+        return ordenService.obtenerOrdenesPendientes();
+    }
+
+    @GetMapping("/{numeroOrden}")
+    public clases.Orden obtenerPorNumero(@PathVariable Integer numeroOrden) throws PersistenciaException {
+        return ordenService.obtenerOrdenPorNumeroOrden(numeroOrden);
+    }
+
+    @PutMapping("/cancelar")
+    public clases.Orden cancelarOrden(@RequestBody NuevaOrdenDTO ordenDTO) throws PersistenciaException {
+        return ordenService.cancelarOrden(ordenDTO);
+    }
+
+    @PutMapping("/estado/{numeroOrden}/{nuevoEstado}")
+    public void cambiarEstado(@PathVariable int numeroOrden, @PathVariable String nuevoEstado) {
+        switch (nuevoEstado.toUpperCase()) {
+            case "LISTO":
+                ordenService.cambiarEstadoCompletada(numeroOrden);
+                break;
+            case "CANCELADO":
+                ordenService.cambiarEstadoCancelada(numeroOrden);
+                break;
+            case "ENTREGADO":
+                ordenService.cambiarEstadoEntregada(numeroOrden);
+                break;
+            case "PREPARACION":
+                ordenService.cambiarEstadoPreparacion(numeroOrden);
+                break;
+        }
+    }
+
+    @GetMapping("/pendientes/fecha")
+    public List<clases.Orden> obtenerOrdenesPorFecha() {
+        return ordenService.obtenerOrdenesPorFechaAscendente();
+    }
+
+    @GetMapping("/pendientes/tortas")
+    public List<clases.Orden> obtenerOrdenesPorTortas() {
+        return ordenService.obtenerOrdenesPendientesPorCantidadTortas();
+    }
+
+
 }

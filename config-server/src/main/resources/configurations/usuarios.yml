@@ -5,12 +5,6 @@ spring:
   application:
     name: usuarios
 
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: tortasSallela
-
 eureka:
   instance:
     hostname: localhost

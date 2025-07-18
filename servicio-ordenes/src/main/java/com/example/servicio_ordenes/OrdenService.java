@@ -114,6 +114,24 @@ public class OrdenService {
     public void cambiarEstadoCancelada(int numeroOrden) {
         ordenRepository.cambiarEstadoCancelada(numeroOrden);
     }
+    
+    /**
+     * Cambia el estado de una orden a completada mediante su número de orden.
+     *
+     * @param numeroOrden el número de la orden que se desea marcar como completada
+     */
+    public void cambiarEstadoEntregada(int numeroOrden) {
+        ordenRepository.cambiarEstadoEntregada(numeroOrden);
+    }
+
+    /**
+     * Cambia el estado de una orden a cancelada mediante su número de orden.
+     *
+     * @param numeroOrden el número de la orden que se desea marcar como cancelada
+     */
+    public void cambiarEstadoPreparacion(int numeroOrden) {
+        ordenRepository.cambiarEstadoPreparacion(numeroOrden);
+    }
 
     /**
      * Obtiene todas las órdenes pendientes almacenadas en el sistema.

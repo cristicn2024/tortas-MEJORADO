@@ -10,8 +10,9 @@ package enums;
 public enum Estado {
     PENDIENTE,
     PREPARACION,
-    LISTO,
-    ENTREGADO,
-    CANCELADO
+    COMPLETADA,
+    ENTREGADA,
+    CANCELADA, 
+    PAGADA
 }
 

@@ -22,5 +22,5 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-public interface ProductoRepository extends MongoRepository<Producto, String> {
+public interface ProductoRepository extends MongoRepository<clases.Producto, String> {
 }

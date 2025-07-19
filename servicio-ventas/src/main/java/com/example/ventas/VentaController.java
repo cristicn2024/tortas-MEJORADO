@@ -24,7 +24,7 @@ public class VentaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Venta>> obtenerTodasLasVentas() {
+    public ResponseEntity<List<clases.Venta>> obtenerTodasLasVentas() {
         return ResponseEntity.ok(ventaService.obtenerTodasLasVentas());
     }
 

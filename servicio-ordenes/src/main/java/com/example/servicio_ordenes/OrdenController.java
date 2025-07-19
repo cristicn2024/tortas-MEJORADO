@@ -8,13 +8,19 @@ import java.util.List;
 import exception.FindException;
 import exception.PersistenciaException;
 import dtos.NuevaOrdenDTO;
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/ordenes")
@@ -80,6 +86,19 @@ public class OrdenController {
     @GetMapping("/pendientes/tortas")
     public List<clases.Orden> obtenerOrdenesPorTortas() {
         return ordenService.obtenerOrdenesPendientesPorCantidadTortas();
+    }
+
+    @GetMapping("/reporte/pdf")
+    public ResponseEntity<byte[]> descargarReporteFiltrado(
+            @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam("hasta") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) throws FindException {
+
+        byte[] pdfBytes = ordenService.generarReporteOrdenesPorRango(desde, hasta);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ordenes_" + desde + "_a_" + hasta + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 
 

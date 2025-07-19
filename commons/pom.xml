@@ -33,4 +33,12 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>5.0.0-M1</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
 </project>

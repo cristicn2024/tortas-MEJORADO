@@ -5,7 +5,7 @@
 package dtos;
 
 import enums.Estado;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class NuevaOrdenDTO {
@@ -16,14 +16,14 @@ public class NuevaOrdenDTO {
     private List<NuevoProductoDTO> listaProductos;
     private String nombreCliente;
     private Estado estado;
-    private Date fecha;
+    private LocalDate fecha;
 
     public NuevaOrdenDTO() {
         this.estado = Estado.PENDIENTE;
         numeroOrden=-1;
     }
 
-    public NuevaOrdenDTO(String nombreCliente, List<NuevoProductoDTO> listaProductos, float total, Date fecha) {
+    public NuevaOrdenDTO(String nombreCliente, List<NuevoProductoDTO> listaProductos, float total, LocalDate fecha) {
         this.total = total;
         this.numeroOrden=-1;
         this.listaProductos = listaProductos;
@@ -80,11 +80,11 @@ public class NuevaOrdenDTO {
         this.estado = estado;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 

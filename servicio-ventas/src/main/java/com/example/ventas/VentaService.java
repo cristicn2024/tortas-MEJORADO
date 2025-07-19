@@ -20,13 +20,13 @@ public class VentaService {
         this.ventaRepository = ventaRepository;
     }
 
-    public List<Venta> obtenerTodasLasVentas() {
+    public List<clases.Venta> obtenerTodasLasVentas() {
         return ventaRepository.findAll();
     }
 
-    public Venta registrarVenta(NuevaVentaDTO nuevaVentaDTO) throws VentaException {
+    public clases.Venta registrarVenta(NuevaVentaDTO nuevaVentaDTO) throws VentaException {
         try {
-            Venta venta = new Venta();
+            clases.Venta venta = new clases.Venta();
 
             venta.setNumeroVenta((int) ventaRepository.count() + 1);
 
@@ -35,7 +35,7 @@ public class VentaService {
                     : LocalDate.now();
             venta.setFechaVenta(fecha);
 
-            venta.setIdOrden(new ObjectId(String.valueOf(nuevaVentaDTO.getOrden().getId())));
+            venta.setIdOrden(String.valueOf(nuevaVentaDTO.getOrden().getId()));
 
             venta.setMetodoPago(nuevaVentaDTO.getMetodoPago());
             venta.setTotal(nuevaVentaDTO.getTotal());
@@ -48,7 +48,7 @@ public class VentaService {
     }
 
     public List<NuevaVentaDTO> obtenerVentasPorRango(LocalDate desde, LocalDate hasta) {
-        List<Venta> ventas = ventaRepository.findByFechaVentaBetween(desde, hasta);
+        List<clases.Venta> ventas = ventaRepository.findByFechaVentaBetween(desde, hasta);
 
         return ventas.stream()
                 .map(v -> new NuevaVentaDTO(

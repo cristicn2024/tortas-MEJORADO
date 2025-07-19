@@ -11,17 +11,34 @@ package clases;
 
 import enums.Estado;
 import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
+@Document(collection = "ordenes")
 public class Orden {
 
+    @Id
     private String id;
+    
+    @Field("numeroOrden")
     private int numeroOrden;
+    
+    @Field("total")
     private float total;
+    
+    @Field("listaProductos")
     private List<Producto> listaProductos;
+    
+    @Field("nombreCliente")
     private String nombreCliente;
+    
+    @Field("estado")
     private Estado estado;
-    private Date fecha;
+    
+    @Field("fecha")
+    private LocalDate fecha;
 
     public Orden() {
     }
@@ -66,11 +83,11 @@ public class Orden {
         this.estado = estado;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 

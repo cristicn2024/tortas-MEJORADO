@@ -4,6 +4,8 @@
  */
 package com.example.servicio_ordenes;
 
+import clases.Orden;
+import clases.Producto;
 import dtos.NuevaOrdenDTO;
 import exception.FindException;
 import exception.PersistenciaException;
@@ -26,9 +28,14 @@ import com.itextpdf.layout.element.Cell;
 // Para escribir en memoria
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.ZoneId;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +46,9 @@ public class OrdenService {
     @Autowired
     private OrdenRepository ordenRepository;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    
     /**
      * Obtiene todas las órdenes almacenadas en el sistema.
      *
@@ -198,51 +208,86 @@ public class OrdenService {
         ordenRepository.ordenCompletada(ordenDTO);
     }
 
-    public byte[] generarReporteOrdenesPorRango(LocalDate desde, LocalDate hasta) throws FindException {
-        List<clases.Orden> ordenes = obtenerOrdenes(); // usa tu método actual que trae todas
+    
+    public clases.Orden actualizarOrden(String id, NuevaOrdenDTO ordenDTO) throws PersistenciaException {
+        try {
+            Query query = new Query(Criteria.where("_id").is(id));
+            Update update = new Update();
 
-        // Filtrar por fechas
-        List<clases.Orden> ordenesFiltradas = ordenes.stream()
-                .filter(orden -> {
-                    LocalDate fecha = orden.getFecha();
-                    return (fecha != null && !fecha.isBefore(desde) && !fecha.isAfter(hasta));
-                })
-                .sorted(Comparator.comparing(clases.Orden::getFecha))
-                .collect(Collectors.toList());
+            update.set("nombreCliente", ordenDTO.getNombreCliente());
+            update.set("fecha", ordenDTO.getFecha());
+            update.set("total", ordenDTO.getTotal());
+            update.set("estado", ordenDTO.getEstado()); // opcional si lo incluye
+
+            mongoTemplate.updateFirst(query, update, Orden.class);
+            return mongoTemplate.findOne(query, Orden.class); // devuelve la actualizada
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al actualizar la orden con id " + id, e);
+        }
+    }
+
+    public byte[] generarReporteOrdenesPorRango(LocalDate desde, LocalDate hasta) throws FindException {
+        List<Orden> ordenes = obtenerOrdenes(); // trae todas
+
+        List<Orden> ordenesFiltradas = ordenes.stream()
+            .filter(o -> {
+                LocalDate fecha = o.getFecha();
+                return fecha != null && !fecha.isBefore(desde) && !fecha.isAfter(hasta);
+            })
+            .sorted(Comparator.comparing(Orden::getFecha))
+            .collect(Collectors.toList());
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(baos);
             PdfDocument pdfDoc = new PdfDocument(writer);
-            Document document = new Document(pdfDoc);
+            Document doc = new Document(pdfDoc);
 
-            document.add(new Paragraph("Reporte de Órdenes Registradas por Rango de Fecha").setBold().setFontSize(16));
-            document.add(new Paragraph("Desde: " + desde + "  Hasta: " + hasta).setFontSize(10));
-            document.add(new Paragraph("\n"));
+            doc.add(new Paragraph("Reporte de Órdenes").setBold().setFontSize(16));
+            doc.add(new Paragraph("Desde: " + desde + " | Hasta: " + hasta).setFontSize(10));
+            doc.add(new Paragraph("\n"));
 
-            float[] columnWidths = {100F, 100F, 100F, 100F, 100F};
-            Table tabla = new Table(columnWidths);
+            double totalGlobal = 0.0;
 
-            tabla.addCell(new Cell().add(new Paragraph("N° Orden")));
-            tabla.addCell(new Cell().add(new Paragraph("Cliente")));
-            tabla.addCell(new Cell().add(new Paragraph("Fecha")));
-            tabla.addCell(new Cell().add(new Paragraph("Total")));
-            tabla.addCell(new Cell().add(new Paragraph("Estado")));
+            for (Orden o : ordenesFiltradas) {
+                doc.add(new Paragraph("Orden #" + o.getNumeroOrden()).setBold());
+                doc.add(new Paragraph("Cliente: " + o.getNombreCliente()));
+                doc.add(new Paragraph("Fecha: " + o.getFecha()));
+                doc.add(new Paragraph("Estado: " + o.getEstado()));
+                doc.add(new Paragraph("\n"));
 
-            for (clases.Orden orden : ordenesFiltradas) {
-                tabla.addCell(new Cell().add(new Paragraph(String.valueOf(orden.getNumeroOrden()))));
-                tabla.addCell(new Cell().add(new Paragraph(orden.getNombreCliente())));
-                tabla.addCell(new Cell().add(new Paragraph(orden.getFecha().toString())));
-                tabla.addCell(new Cell().add(new Paragraph(String.format("$%.2f", orden.getTotal()))));
-                tabla.addCell(new Cell().add(new Paragraph(orden.getEstado().toString())));
+                Table tabla = new Table(new float[]{100F, 100F, 100F, 200F});
+                tabla.addCell("Producto");
+                tabla.addCell("Cantidad");
+                tabla.addCell("Precio");
+                tabla.addCell("Notas");
+
+                for (Producto producto : o.getListaProductos()) {
+                    tabla.addCell(producto.getNombre());
+                    tabla.addCell(String.valueOf(producto.getCantidad()));
+                    tabla.addCell(String.format("$%.2f", producto.getPrecio()));
+                    tabla.addCell(producto.getNotas() != null ? producto.getNotas() : "");
+                }
+
+                doc.add(tabla);
+                doc.add(new Paragraph("Total de la orden: $" + String.format("%.2f", o.getTotal()))
+                        .setBold().setFontSize(11));
+                doc.add(new Paragraph("\n--------------------------------------------------\n"));
+
+                totalGlobal += o.getTotal();
             }
 
-            document.add(tabla);
-            document.close();
+            // Total acumulado
+            doc.add(new Paragraph("\nTotal acumulado de todas las órdenes: $" + String.format("%.2f", totalGlobal))
+                    .setBold().setFontSize(12));
+
+            doc.close();
             return baos.toByteArray();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new FindException("Error al generar el reporte PDF", e);
         }
     }
+
 
 }

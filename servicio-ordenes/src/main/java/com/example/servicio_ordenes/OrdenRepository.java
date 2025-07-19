@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.example.servicio_ordenes;
 
 import clases.Orden;
@@ -11,7 +10,7 @@ import dtos.NuevaOrdenDTO;
 import dtos.NuevoProductoDTO;
 import dtos.TortaDTO;
 import clases.Producto;
-import clases.Ingrediente;
+import clases.NotaPersonalizacion;
 import exception.FindException;
 import exception.PersistenciaException;
 
@@ -60,17 +59,24 @@ public class OrdenRepository {
      *
      * @param ordenDTO los detalles de la nueva orden a registrar
      * @return la orden registrada
-     * @throws PersistenciaException si ocurre algún error durante la persistencia de la orden
+     * @throws PersistenciaException si ocurre algún error durante la
+     * persistencia de la orden
      */
     public Orden registrarOrden(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
         try {
             Orden orden = new Orden();
             orden.setNombreCliente(ordenDTO.getNombreCliente());
             orden.setNumeroOrden(obtenerNumeroOrdenes() + 1);
-            
+
             List<Producto> productos = convertirProductosDTO(ordenDTO.getListaProductos());
             orden.setListaProductos(productos);
-            orden.setTotal(ordenDTO.getTotal());
+
+            // Recalcular el total basado en productos (si lo deseas más preciso)
+            double total = productos.stream()
+                    .mapToDouble(p -> p.getPrecio() * p.getCantidad())
+                    .sum();
+            orden.setTotal(total);
+
             orden.setFecha(ordenDTO.getFecha());
             orden.setEstado(Estado.PENDIENTE);
 
@@ -89,48 +95,51 @@ public class OrdenRepository {
      */
     private List<Producto> convertirProductosDTO(List<NuevoProductoDTO> productosDTO) {
         List<Producto> productos = new ArrayList<>();
-        
+
         for (NuevoProductoDTO productoDTO : productosDTO) {
             Producto producto = new Producto();
             producto.setCantidad(productoDTO.getCantidad());
             producto.setCategoria(productoDTO.getCategoria());
             producto.setDescripcion(productoDTO.getDescripcion());
             producto.setNombre(productoDTO.getNombre());
-            producto.setNotas(productoDTO.getNotas());
-            producto.setPrecio(productoDTO.getPrecio());
-            
-            if (productoDTO instanceof TortaDTO) {
-                TortaDTO torta = (TortaDTO) productoDTO;
-                List<Ingrediente> ingredientes = Arrays.asList(
-                    new Ingrediente("cantCarne", torta.getCantCarne()),
-                    new Ingrediente("cantCebolla", torta.getCantCebolla()),
-                    new Ingrediente("cantJalapeño", torta.getCantJalapeno()),
-                    new Ingrediente("cantMayonesa", torta.getCantMayonesa()),
-                    new Ingrediente("cantMostaza", torta.getCantMostaza()),
-                    new Ingrediente("cantRepollo", torta.getCantRepollo()),
-                    new Ingrediente("cantTomate", torta.getCantTomate())
+
+            double precioBase = productoDTO.getPrecio();
+            double precioFinal = precioBase;
+
+            if (productoDTO instanceof TortaDTO torta) {
+                List<NotaPersonalizacion> notas = torta.getNotasPersonalizadas();
+                producto.setNotas(
+                        notas.stream()
+                                .map(NotaPersonalizacion::getEtiqueta)
+                                .collect(Collectors.joining(", "))
                 );
-                producto.setIngredientes(ingredientes);
-            } else {
-                producto.setIngredientes(new ArrayList<>());
+
+                for (NotaPersonalizacion nota : notas) {
+                    precioFinal += nota.getIncremento();
+                }
+
             }
+            producto.setPrecio(precioFinal);
             productos.add(producto);
         }
+
         return productos;
     }
 
     /**
      * Obtiene el precio de un producto por su nombre.
      *
-     * @param nombreProducto el nombre del producto del cual se desea obtener el precio
+     * @param nombreProducto el nombre del producto del cual se desea obtener el
+     * precio
      * @return el precio del producto
-     * @throws FindException si ocurre algún error al buscar el precio del producto
+     * @throws FindException si ocurre algún error al buscar el precio del
+     * producto
      */
     public Double obtenerPrecioPorNombre(String nombreProducto) throws FindException {
         try {
             Query query = new Query(Criteria.where("nombre").is(nombreProducto));
             Document result = mongoTemplate.findOne(query, Document.class, PRODUCTOS_COLLECTION);
-            
+
             return result != null ? result.getDouble("precio") : null;
         } catch (Exception ex) {
             logger.error("Error al obtener precio por nombre", ex);
@@ -177,13 +186,14 @@ public class OrdenRepository {
      *
      * @param numeroOrden el número de la orden que se desea obtener
      * @return la orden encontrada
-     * @throws PersistenciaException si ocurre algún error durante la búsqueda de la orden
+     * @throws PersistenciaException si ocurre algún error durante la búsqueda
+     * de la orden
      */
     public Orden obtenerOrdenPorNumeroOrden(Integer numeroOrden) throws PersistenciaException {
         try {
             Query query = new Query(Criteria.where("numeroOrden").is(numeroOrden));
             Orden orden = mongoTemplate.findOne(query, Orden.class, COLLECTION_NAME);
-            
+
             if (orden == null) {
                 throw new PersistenciaException("No se encontró la orden con el número especificado");
             }
@@ -199,20 +209,21 @@ public class OrdenRepository {
      *
      * @param ordenDTO los detalles de la orden que se desea cancelar
      * @return la orden cancelada
-     * @throws PersistenciaException si ocurre algún error durante la cancelación de la orden
+     * @throws PersistenciaException si ocurre algún error durante la
+     * cancelación de la orden
      */
     public Orden cancelarOrden(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
         try {
             Orden ordenEncontrada = obtenerOrdenPorNumeroOrden(ordenDTO.getNumeroOrden());
-            
+
             Query query = new Query(Criteria.where("id").is(ordenEncontrada.getId()));
             Update update = new Update().set("estado", "CANCELADA");
-            
+
             mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
-            
+
             logger.info("Orden cancelada con éxito: {}", ordenEncontrada.toString());
             ordenEncontrada.setEstado(Estado.CANCELADA);
-            
+
             // Restaurar inventario
             for (Producto producto : ordenEncontrada.getListaProductos()) {
                 if (cancelarProducto(producto.getNombre(), producto.getCantidad())) {
@@ -221,7 +232,7 @@ public class OrdenRepository {
                     logger.warn("No se sumó al inventario el producto: {}", producto.toString());
                 }
             }
-            
+
             return ordenEncontrada;
         } catch (Exception ex) {
             logger.error("Error al cancelar orden", ex);
@@ -241,11 +252,11 @@ public class OrdenRepository {
         try {
             Query query = new Query(Criteria.where("nombre").is(nombreProducto));
             Producto producto = mongoTemplate.findOne(query, Producto.class, PRODUCTOS_COLLECTION);
-            
+
             if (producto != null) {
                 Update update = new Update().inc("cantidad", cantidad);
                 mongoTemplate.updateFirst(query, update, PRODUCTOS_COLLECTION);
-                
+
                 logger.info("Se actualizó el inventario de {} sumando {}", nombreProducto, cantidad);
                 return true;
             } else {
@@ -261,7 +272,8 @@ public class OrdenRepository {
     /**
      * Cambia el estado de una orden a completada mediante su número de orden.
      *
-     * @param numeroOrden el número de la orden que se desea marcar como completada
+     * @param numeroOrden el número de la orden que se desea marcar como
+     * completada
      */
     public void cambiarEstadoCompletada(int numeroOrden) {
         try {
@@ -277,7 +289,8 @@ public class OrdenRepository {
     /**
      * Cambia el estado de una orden a cancelada mediante su número de orden.
      *
-     * @param numeroOrden el número de la orden que se desea marcar como cancelada
+     * @param numeroOrden el número de la orden que se desea marcar como
+     * cancelada
      */
     public void cambiarEstadoCancelada(int numeroOrden) {
         try {
@@ -289,11 +302,12 @@ public class OrdenRepository {
             logger.error("Error al cambiar estado a cancelada", ex);
         }
     }
-    
-     /**
+
+    /**
      * Cambia el estado de una orden a ENTREGADO mediante su número de orden.
      *
-     * @param numeroOrden el número de la orden que se desea marcar como cancelada
+     * @param numeroOrden el número de la orden que se desea marcar como
+     * cancelada
      */
     public void cambiarEstadoEntregada(int numeroOrden) {
         try {
@@ -305,11 +319,12 @@ public class OrdenRepository {
             logger.error("Error al cambiar estado a entregado", ex);
         }
     }
-    
-     /**
+
+    /**
      * Cambia el estado de una orden a cancelada mediante su número de orden.
      *
-     * @param numeroOrden el número de la orden que se desea marcar como cancelada
+     * @param numeroOrden el número de la orden que se desea marcar como
+     * cancelada
      */
     public void cambiarEstadoPreparacion(int numeroOrden) {
         try {
@@ -342,11 +357,12 @@ public class OrdenRepository {
     /**
      * Obtiene todas las órdenes pendientes ordenadas por la cantidad de tortas.
      *
-     * @return una lista de órdenes pendientes ordenadas por la cantidad de tortas
+     * @return una lista de órdenes pendientes ordenadas por la cantidad de
+     * tortas
      */
     public List<Orden> obtenerOrdenesPendientesPorCantidadTortas() {
         List<Orden> ordenesPendientes = obtenerOrdenesPendientes();
-        
+
         return ordenesPendientes.stream()
                 .sorted((orden1, orden2) -> {
                     int cantidadTortas1 = calcularCantidadTortas(orden1);
@@ -364,7 +380,8 @@ public class OrdenRepository {
     }
 
     /**
-     * Obtiene todas las órdenes pendientes ordenadas por fecha de manera ascendente.
+     * Obtiene todas las órdenes pendientes ordenadas por fecha de manera
+     * ascendente.
      *
      * @return una lista de órdenes ordenadas por fecha ascendente
      */
@@ -372,8 +389,8 @@ public class OrdenRepository {
         try {
             Query query = new Query(Criteria.where("estado").is("PENDIENTE"));
             query.with(org.springframework.data.domain.Sort.by(
-                org.springframework.data.domain.Sort.Direction.ASC, "fecha"));
-            
+                    org.springframework.data.domain.Sort.Direction.ASC, "fecha"));
+
             List<Orden> ordenes = mongoTemplate.find(query, Orden.class, COLLECTION_NAME);
             logger.info("Se consultaron {} órdenes por fecha ascendente", ordenes.size());
             return ordenes;
@@ -386,8 +403,10 @@ public class OrdenRepository {
     /**
      * Marca una orden como completada en el sistema.
      *
-     * @param ordenDTO los detalles de la orden que se desea marcar como completada
-     * @throws PersistenciaException si ocurre algún error durante la actualización del estado de la orden
+     * @param ordenDTO los detalles de la orden que se desea marcar como
+     * completada
+     * @throws PersistenciaException si ocurre algún error durante la
+     * actualización del estado de la orden
      */
     public void ordenCompletada(NuevaOrdenDTO ordenDTO) throws PersistenciaException {
         cambiarEstadoCompletada(ordenDTO.getNumeroOrden());

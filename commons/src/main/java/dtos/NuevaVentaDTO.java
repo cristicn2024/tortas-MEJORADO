@@ -6,10 +6,9 @@ package dtos;
 
 import enums.MetodoPago;
 import java.time.LocalDate;
-import dtos.NuevaOrdenDTO;
 
 public class NuevaVentaDTO {
-    private int id;
+    private String id;
     private NuevaOrdenDTO orden;
     private MetodoPago metodoPago;
     private LocalDate fechaVenta;
@@ -25,11 +24,11 @@ public class NuevaVentaDTO {
         this.total = total;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
     

@@ -28,8 +28,8 @@ public class Producto {
     @Field("precio")
     private double precio;
     
-    @Field("ingredientes")
-    private List<Ingrediente> ingredientes;
+    @Field("etiquetas")
+    private List<NotaPersonalizacion> notaPersonalizacion;
     
     @Field("nombre")
     private String nombre;
@@ -73,7 +73,7 @@ public class Producto {
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }
 
-    public List<Ingrediente> getIngredientes() { return ingredientes; }
-    public void setIngredientes(List<Ingrediente> ingredientes) { this.ingredientes = ingredientes; }
+    public List<NotaPersonalizacion> getNotaPersonalizacion() { return notaPersonalizacion; }
+    public void setNotaPersonalizacion(List<NotaPersonalizacion> notaPersonalizacion) { this.notaPersonalizacion = notaPersonalizacion; }
 }
 

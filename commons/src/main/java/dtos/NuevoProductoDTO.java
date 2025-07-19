@@ -13,11 +13,9 @@ public class NuevoProductoDTO {
     private int id;
     private int cantidad;
     private String nombre;
-    private String nombrePrevio;
     private String descripcion;
     private double precio;
     private String categoria;
-    private String notas;
 
     public NuevoProductoDTO() {
     }
@@ -34,36 +32,13 @@ public class NuevoProductoDTO {
         this.categoria = categoria;
     }
 
-    public NuevoProductoDTO(int cantidad, String nombre, String nombrePrevio, String descripcion, double precio, String categoria) {
-        this.cantidad = cantidad;
-        this.nombre = nombre;
-        this.nombrePrevio = nombrePrevio;
-        this.descripcion = descripcion;
-        this.precio = precio;
-        this.categoria = categoria;
-    }
-
-    public NuevoProductoDTO(String nombre, int cantidad, double precio, String categoria) {
-        this.cantidad = cantidad;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.categoria = categoria;
-    }
-
-    public NuevoProductoDTO(String nombre, int cantidad, String categoria) {
-        this.cantidad = cantidad;
-        this.nombre = nombre;
-        this.categoria = categoria;
-    }
-
-    public NuevoProductoDTO(int id, int cantidad, String nombre, String descripcion, double precio, String categoria, String notas) {
+    public NuevoProductoDTO(int id, int cantidad, String nombre, String descripcion, double precio, String categoria) {
         this.id = id;
         this.cantidad = cantidad;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.categoria = categoria;
-        this.notas = notas;
     }
 
     public int getId() {
@@ -90,13 +65,6 @@ public class NuevoProductoDTO {
         this.nombre = nombre;
     }
 
-    public String getNombrePrevio() {
-        return nombrePrevio;
-    }
-
-    public void setNombrePrevio(String nombrePrevio) {
-        this.nombrePrevio = nombrePrevio;
-    }
 
     public String getDescripcion() {
         return descripcion;
@@ -122,12 +90,6 @@ public class NuevoProductoDTO {
         this.categoria = categoria;
     }
 
-    public String getNotas() {
-        return notas;
-    }
-
-    public void setNotas(String notas) {
-        this.notas = notas;
-    }
+   
 
 }

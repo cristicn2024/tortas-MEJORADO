@@ -10,9 +10,9 @@ import java.util.List;
 
 public class NuevaOrdenDTO {
     
-    private int id;
+    private String id;
     private int numeroOrden;
-    private float total;
+    private double total;
     private List<NuevoProductoDTO> listaProductos;
     private String nombreCliente;
     private Estado estado;
@@ -23,7 +23,17 @@ public class NuevaOrdenDTO {
         numeroOrden=-1;
     }
 
-    public NuevaOrdenDTO(String nombreCliente, List<NuevoProductoDTO> listaProductos, float total, LocalDate fecha) {
+    public NuevaOrdenDTO(String nombreCliente, List<NuevoProductoDTO> listaProductos, double total, LocalDate fecha) {
+        this.total = total;
+        this.numeroOrden=-1;
+        this.listaProductos = listaProductos;
+        this.nombreCliente = nombreCliente;
+        this.estado = Estado.PENDIENTE;
+        this.fecha = fecha;
+    }
+    
+    public NuevaOrdenDTO(String id, String nombreCliente, List<NuevoProductoDTO> listaProductos, double total, LocalDate fecha) {
+        this.id = id;
         this.total = total;
         this.numeroOrden=-1;
         this.listaProductos = listaProductos;
@@ -32,11 +42,11 @@ public class NuevaOrdenDTO {
         this.fecha = fecha;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
     
-    public void setId(int id){
+    public void setId(String id){
         this.id = id;
     }
 
@@ -48,11 +58,11 @@ public class NuevaOrdenDTO {
         this.numeroOrden = numeroOrden;
     }
 
-    public float getTotal() {
+    public double getTotal() {
         return total;
     }
 
-    public void setTotal(float total) {
+    public void setTotal(double total) {
         this.total = total;
     }
 

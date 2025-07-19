@@ -26,7 +26,7 @@ public class Orden {
     private int numeroOrden;
     
     @Field("total")
-    private float total;
+    private double total;
     
     @Field("listaProductos")
     private List<Producto> listaProductos;
@@ -51,11 +51,11 @@ public class Orden {
         this.numeroOrden = numeroOrden;
     }
 
-    public float getTotal() {
+    public double getTotal() {
         return total;
     }
 
-    public void setTotal(float total) {
+    public void setTotal(double total) {
         this.total = total;
     }
 

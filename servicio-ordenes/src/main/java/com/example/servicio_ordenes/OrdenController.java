@@ -89,17 +89,28 @@ public class OrdenController {
     }
 
     @GetMapping("/reporte/pdf")
-    public ResponseEntity<byte[]> descargarReporteFiltrado(
-            @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam("hasta") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) throws FindException {
+    public ResponseEntity<byte[]> generarReporteFiltrado(
+        @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+        @RequestParam("hasta") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) throws FindException {
 
-        byte[] pdfBytes = ordenService.generarReporteOrdenesPorRango(desde, hasta);
+    byte[] pdfBytes = ordenService.generarReporteOrdenesPorRango(desde, hasta);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ordenes_" + desde + "_a_" + hasta + ".pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdfBytes);
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ordenes_" + desde + "_a_" + hasta + ".pdf")
+        .contentType(MediaType.APPLICATION_PDF)
+        .body(pdfBytes);
+}
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarOrden(@PathVariable String id, @RequestBody NuevaOrdenDTO ordenDTO) {
+        try {
+            clases.Orden actualizada = ordenService.actualizarOrden(id, ordenDTO);
+            return ResponseEntity.ok(actualizada);
+        } catch (PersistenciaException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
+
 
 
 }

@@ -8,9 +8,11 @@ import exception.VentaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/ventas")
@@ -50,4 +52,30 @@ public class VentaController {
         List<NuevaVentaDTO> ventas = ventaService.obtenerVentasPorRango(desde, hasta);
         return ResponseEntity.ok(ventas);
     }
+    
+    @GetMapping("/reporte/pdf")
+    public ResponseEntity<byte[]> generarReportePDF(
+            @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam("hasta") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        try {
+            byte[] pdf = ventaService.generarReporteVentasPorFecha(desde, hasta);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ventas_" + desde + "_a_" + hasta + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+        } catch (VentaException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarVenta(@PathVariable String id, @RequestBody NuevaVentaDTO ventaDTO) {
+        try {
+            clases.Venta actualizada = ventaService.actualizarVenta(id, ventaDTO);
+            return ResponseEntity.ok(actualizada);
+        } catch (VentaException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
 }

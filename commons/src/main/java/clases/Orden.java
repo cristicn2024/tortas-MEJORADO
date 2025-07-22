@@ -39,6 +39,18 @@ public class Orden {
     
     @Field("fecha")
     private LocalDate fecha;
+    
+    @Field("envioDomicilio")
+    private boolean envioDomicilio;
+
+    @Field("numeroTelefono")
+    private String numeroTelefono;
+
+    @Field("direccionEntrega")
+    private String direccionEntrega;
+
+    @Field("costoEnvio")
+    private Double costoEnvio;
 
     public Orden() {
     }
@@ -99,6 +111,40 @@ public class Orden {
         this.id = id;
     }
 
+    public boolean isEnvioDomicilio() {
+        return envioDomicilio;
+    }
+
+    public void setEnvioDomicilio(boolean envioDomicilio) {
+        this.envioDomicilio = envioDomicilio;
+    }
+
+    public String getNumeroTelefono() {
+        return numeroTelefono;
+    }
+
+    public void setNumeroTelefono(String numeroTelefono) {
+        this.numeroTelefono = numeroTelefono;
+    }
+
+    public String getDireccionEntrega() {
+        return direccionEntrega;
+    }
+
+    public void setDireccionEntrega(String direccionEntrega) {
+        this.direccionEntrega = direccionEntrega;
+    }
+
+    public Double getCostoEnvio() {
+        return costoEnvio;
+    }
+
+    public void setCostoEnvio(Double costoEnvio) {
+        this.costoEnvio = costoEnvio;
+    }
+    
+    
+
     @Override
     public String toString() {
         return "Orden{" +
@@ -111,5 +157,7 @@ public class Orden {
                 ", fecha=" + fecha +
                 '}';
     }
+    
+    
 }
 

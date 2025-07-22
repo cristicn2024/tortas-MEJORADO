@@ -8,14 +8,25 @@ package dtos;
  *
  * @author crist
  */
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.PROPERTY,
+  property = "categoria"
+)
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = TortaDTO.class, name = "Torta")
+})
 public class NuevoProductoDTO {
 
     private int id;
     private int cantidad;
     private String nombre;
-    private String descripcion;
     private double precio;
     private String categoria;
+    private String notas;
 
     public NuevoProductoDTO() {
     }
@@ -24,21 +35,34 @@ public class NuevoProductoDTO {
         this.nombre = nombre;
     }
 
-    public NuevoProductoDTO(int cantidad, String nombre, String descripcion, double precio, String categoria) {
+    public NuevoProductoDTO(int cantidad, String nombre, double precio, String categoria) {
         this.cantidad = cantidad;
         this.nombre = nombre;
-        this.descripcion = descripcion;
         this.precio = precio;
         this.categoria = categoria;
     }
 
-    public NuevoProductoDTO(int id, int cantidad, String nombre, String descripcion, double precio, String categoria) {
+
+    public NuevoProductoDTO(String nombre, int cantidad, double precio, String categoria) {
+        this.cantidad = cantidad;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.categoria = categoria;
+    }
+
+    public NuevoProductoDTO(String nombre, int cantidad, String categoria) {
+        this.cantidad = cantidad;
+        this.nombre = nombre;
+        this.categoria = categoria;
+    }
+
+    public NuevoProductoDTO(int id, int cantidad, String nombre, double precio, String categoria, String notas) {
         this.id = id;
         this.cantidad = cantidad;
         this.nombre = nombre;
-        this.descripcion = descripcion;
         this.precio = precio;
         this.categoria = categoria;
+        this.notas = notas;
     }
 
     public int getId() {
@@ -66,14 +90,6 @@ public class NuevoProductoDTO {
     }
 
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
     public double getPrecio() {
         return precio;
     }
@@ -90,6 +106,12 @@ public class NuevoProductoDTO {
         this.categoria = categoria;
     }
 
-   
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
+    }
 
 }

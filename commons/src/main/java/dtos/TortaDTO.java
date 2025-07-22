@@ -32,10 +32,12 @@ public class TortaDTO extends NuevoProductoDTO {
         this.notasPersonalizadas = notasPersonalizadas;
     }
 
+    @Override
     public String getNotas() {
         return notas;
     }
 
+    @Override
     public void setNotas(String notas) {
         this.notas = notas;
     }

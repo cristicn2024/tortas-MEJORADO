@@ -67,23 +67,34 @@ public class OrdenRepository {
             Orden orden = new Orden();
             orden.setNombreCliente(ordenDTO.getNombreCliente());
             orden.setNumeroOrden(obtenerNumeroOrdenes() + 1);
+            orden.setFecha(ordenDTO.getFecha());
+            orden.setEstado(Estado.PENDIENTE);
 
             List<Producto> productos = convertirProductosDTO(ordenDTO.getListaProductos());
             orden.setListaProductos(productos);
 
-            // Recalcular el total basado en productos (si lo deseas más preciso)
             double total = productos.stream()
                     .mapToDouble(p -> p.getPrecio() * p.getCantidad())
                     .sum();
-            orden.setTotal(total);
 
-            orden.setFecha(ordenDTO.getFecha());
-            orden.setEstado(Estado.PENDIENTE);
+            // Si es envío a domicilio, guardar datos extra y agregar costo al total
+            if (ordenDTO.isEnvioDomicilio()) {
+                orden.setEnvioDomicilio(true);
+                orden.setNumeroTelefono(ordenDTO.getNumeroTelefono());
+                orden.setDireccionEntrega(ordenDTO.getDireccionEntrega());
+                orden.setCostoEnvio(ordenDTO.getCostoEnvio());
+
+                total += ordenDTO.getCostoEnvio() != null ? ordenDTO.getCostoEnvio() : 0.0;
+            } else {
+                orden.setEnvioDomicilio(false);
+            }
+
+            orden.setTotal(total);
 
             Orden ordenGuardada = mongoTemplate.save(orden, COLLECTION_NAME);
             logger.info("Se insertó la orden: {}", ordenGuardada.toString());
-
             return ordenGuardada;
+
         } catch (Exception ex) {
             logger.error("Error al registrar orden", ex);
             throw new PersistenciaException("Error al registrar orden", ex);
@@ -100,7 +111,6 @@ public class OrdenRepository {
             Producto producto = new Producto();
             producto.setCantidad(productoDTO.getCantidad());
             producto.setCategoria(productoDTO.getCategoria());
-            producto.setDescripcion(productoDTO.getDescripcion());
             producto.setNombre(productoDTO.getNombre());
 
             double precioBase = productoDTO.getPrecio();
@@ -108,17 +118,32 @@ public class OrdenRepository {
 
             if (productoDTO instanceof TortaDTO torta) {
                 List<NotaPersonalizacion> notas = torta.getNotasPersonalizadas();
-                producto.setNotas(
-                        notas.stream()
-                                .map(NotaPersonalizacion::getEtiqueta)
-                                .collect(Collectors.joining(", "))
-                );
+                logger.info("Notas personalizadas recibidas: {}", notas);
+                if (notas != null && !notas.isEmpty()) {
+                    // sumar incrementos al precio
+                    double incremento = notas.stream()
+                            .mapToDouble(NotaPersonalizacion::getIncremento)
+                            .sum();
+                    precioFinal += incremento;
 
-                for (NotaPersonalizacion nota : notas) {
-                    precioFinal += nota.getIncremento();
+                    // guardar notas como texto
+                    String etiquetas = notas.stream()
+                            .map(NotaPersonalizacion::getEtiqueta)
+                            .collect(Collectors.joining(", "));
+                    producto.setNotas(etiquetas);
+
+                    // 🟢 guardar también la lista completa
+                    producto.setNotasPersonalizadas(notas);
+                } else {
+                    producto.setNotas("");
+                    producto.setNotasPersonalizadas(new ArrayList<>());
                 }
 
+            } else {
+                producto.setNotas(productoDTO.getNotas());
+                producto.setNotasPersonalizadas(new ArrayList<>()); // vacío si no aplica
             }
+
             producto.setPrecio(precioFinal);
             productos.add(producto);
         }

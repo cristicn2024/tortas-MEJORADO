@@ -1,12 +1,17 @@
 FROM eclipse-temurin:17-jdk
 
-ENV JAVA_HOME=/opt/java/openjdk \
-    PATH="$JAVA_HOME/bin:$PATH"
+# Comprobamos y definimos correctamente JAVA_HOME
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 WORKDIR /app
 
+# Copiar todos los archivos
 COPY . /app
 
+# Dar permisos y compilar el proyecto
 RUN chmod +x mvnw && ./mvnw clean install -DskipTests
 
+# Ejecutar el microservicio
 CMD ["./mvnw", "spring-boot:run"]
+

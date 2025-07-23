@@ -19,18 +19,6 @@ spring:
             allowedMethods: "*"
             allowedHeaders: "*"
       routes:
-        - id: notificaciones-ws
-          uri: lb:ws://NOTIFICACIONES-SERVICE
-          predicates:
-            - Path=/ws/**
-          filters:
-            - RewritePath=/ws/(?<segment>.*), /ws/${segment}
-            - PreserveHostHeader
-        - id: frontend-public
-          uri: lb://FRONTEND
-          predicates:
-            - Path=/login, /signup, /css/**, /js/**, /img/**
-
         - id: auth
           uri: lb://AUTH
           predicates:
@@ -56,10 +44,6 @@ spring:
           predicates:
             - Path=/api/v1/ventas/**
 
-        - id: frontend
-          uri: lb://FRONTEND
-          predicates:
-            - Path=/**
 
 
 eureka:

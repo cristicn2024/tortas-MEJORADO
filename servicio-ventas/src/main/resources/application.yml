@@ -1,12 +1,10 @@
 spring:
   application:
-    name: servicio-ventas
-    
+    name: servicio-ventas  
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: tortasSallela
+      uri: mongodb+srv://cristicn2004:78357Cas123+@clustertortas0.nazanhp.mongodb.net/tortasSallela
+
     
   config:
     import: optional:configserver:http://localhost:8888

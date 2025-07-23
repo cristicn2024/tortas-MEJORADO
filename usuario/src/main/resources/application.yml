@@ -3,9 +3,8 @@ spring:
     name: usuarios
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: tortasSallea
+      uri: mongodb+srv://cristicn2004:78357Cas123+@clustertortas0.nazanhp.mongodb.net/tortasSallela
+
 
     
   config:

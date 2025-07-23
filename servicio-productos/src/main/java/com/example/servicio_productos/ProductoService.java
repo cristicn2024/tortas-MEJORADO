@@ -42,12 +42,10 @@ public class ProductoService {
         return productoRepository.findById(id)
             .map(productoExistente -> {
                 productoExistente.setNombre(productoActualizado.getNombre());
-                productoExistente.setDescripcion(productoActualizado.getDescripcion());
                 productoExistente.setPrecio(productoActualizado.getPrecio());
                 productoExistente.setCantidad(productoActualizado.getCantidad());
                 productoExistente.setCategoria(productoActualizado.getCategoria());
                 productoExistente.setNotas(productoActualizado.getNotas());
-                productoExistente.setIngredientes(productoActualizado.getIngredientes());
                 return productoRepository.save(productoExistente);
             })
             .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
@@ -80,8 +78,7 @@ public class ProductoService {
                 tabla.addCell(new Cell().add(new Paragraph(String.format("$%.2f", producto.getPrecio()))));
                 tabla.addCell(new Cell().add(new Paragraph(String.valueOf(producto.getCantidad()))));
                 tabla.addCell(new Cell().add(new Paragraph(producto.getCategoria() != null ? producto.getCategoria() : "N/A")));
-                tabla.addCell(new Cell().add(new Paragraph(producto.getDescripcion() != null ? producto.getDescripcion() : "")));
-            }
+             }
 
 
             document.add(tabla);

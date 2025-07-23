@@ -14,10 +14,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
   include = JsonTypeInfo.As.PROPERTY,
-  property = "categoria"
+  property = "tipo"
 )
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = TortaDTO.class, name = "Torta")
+  @JsonSubTypes.Type(value = TortaDTO.class, name = "torta")
 })
 public class NuevoProductoDTO {
 

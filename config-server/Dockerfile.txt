@@ -1,9 +1,12 @@
 FROM eclipse-temurin:17-jdk
 
+ENV JAVA_HOME=/opt/java/openjdk \
+    PATH="$JAVA_HOME/bin:$PATH"
+
 WORKDIR /app
 
 COPY . /app
 
-RUN ./mvnw clean install -DskipTests
+RUN chmod +x mvnw && ./mvnw clean install -DskipTests
 
 CMD ["./mvnw", "spring-boot:run"]

@@ -1,7 +1,35 @@
+# Build artifacts
 target/
+!target/config-server-0.0.1-SNAPSHOT.jar
+
+# Git
 .git/
 .gitignore
-Dockerfile
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Documentation
 *.md
+README*
+
+# IDE files
 *.iml
+.idea/
+.vscode/
+.settings/
+.project
+.classpath
+
+# Logs
 *.log
+logs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper (opcional, pero recomendado mantenerlo)
+# .mvn/
+# mvnw*

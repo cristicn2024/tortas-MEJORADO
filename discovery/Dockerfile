@@ -7,6 +7,6 @@ RUN mvn clean package -DskipTests
 # Etapa 2: Imagen ligera solo con el .jar ejecutable
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
-COPY --from=build /app/target/gateway-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/discovery-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8761
 ENTRYPOINT ["java", "-jar", "app.jar"]

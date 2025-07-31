@@ -1,9 +1,6 @@
 package com.example.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 /**
  * DTO (Data Transfer Object) que representa la respuesta con la información
@@ -21,45 +18,29 @@ import lombok.Setter;
  * 
  * @author Ramos
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class UsuarioResponse {
 
     private String idUsuario;
     private String username;
     private String password;
     
+     // Constructor sin argumentos
     public UsuarioResponse() {}
-
+    
+    // Constructor con argumentos
     public UsuarioResponse(String idUsuario, String username, String password) {
         this.idUsuario = idUsuario;
         this.username = username;
         this.password = password;
     }
-
-    public String getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(String idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    
+    // Getters y Setters
+    public String getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(String idUsuario) { this.idUsuario = idUsuario; }
+    
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }

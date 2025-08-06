@@ -42,7 +42,8 @@ public class AuthConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
                 "/api/v1/usuarios/username/**",  // ya permitido
-                "/api/v1/usuarios"               // ← AGREGA ESTE
+                "/api/v1/usuarios",
+                "/api/v1/usuarios/"   // ← AGREGA ESTE
             ).permitAll()
             .anyRequest().authenticated()
         );

@@ -57,6 +57,11 @@ public class ProductoController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
+    
+    @GetMapping("/categoria/{nombreCategoria}")
+    public List<clases.Producto> obtenerPorCategoria(@PathVariable String nombreCategoria) {
+        return productoService.obtenerPorCategoria(nombreCategoria);
+    }
 
 
 }

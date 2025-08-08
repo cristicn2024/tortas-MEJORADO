@@ -112,5 +112,51 @@ public class OrdenController {
     }
 
 
+    @GetMapping("/{numeroOrden}/ticket")
+public ResponseEntity<String> generarTicket(@PathVariable Integer numeroOrden) throws PersistenciaException {
+    clases.Orden orden = ordenService.obtenerOrdenPorNumeroOrden(numeroOrden);
+    String ticket = generarTextoTicket(orden);
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8")
+        .body(ticket);
+}
+
+private String generarTextoTicket(clases.Orden orden) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("      TORTAS SALLELA Suc. Ciudad Obregon, Sonora.\n");
+    sb.append("      Tel. (644)1038475 o (644)1261783.\n");
+    sb.append("     ORDEN No. ").append(orden.getNumeroOrden()).append("\n");
+    sb.append("============================\n");
+    sb.append("Cliente: ").append(orden.getNombreCliente()).append("\n");
+    sb.append("Tel: ").append(orden.getNumeroTelefono()).append("\n");
+    if (orden.isEnvioDomicilio()) {
+        sb.append("Domicilio: ").append(orden.getDireccionEntrega()).append("\n");
+    }
+    sb.append("Fecha: ").append(orden.getFecha()).append("\n");
+    sb.append("Estado: ").append(orden.getEstado()).append("\n");
+    sb.append("----------------------------\n");
+
+    for (var producto : orden.getListaProductos()) {
+        sb.append(producto.getCantidad()).append(" x ").append(producto.getNombre()).append("\n");
+        sb.append("  $").append(producto.getPrecio()).append("\n");
+        if (producto.getNotasPersonalizadas() != null && !producto.getNotasPersonalizadas().isEmpty()) {
+            for (var nota : producto.getNotasPersonalizadas()) {
+                sb.append("   - ").append(nota.getEtiqueta());
+                if (nota.getIncremento() > 0) {
+                    sb.append(" (+$").append(nota.getIncremento()).append(")");
+                }
+                sb.append("\n");
+            }
+        }
+    }
+
+    sb.append("----------------------------\n");
+    sb.append("Costo envío: $").append(orden.getCostoEnvio()).append("\n");
+    sb.append("TOTAL: $").append(orden.getTotal()).append("\n");
+    sb.append("============================\n");
+    sb.append(" ¡Gracias por tu orden! 🍽️\n");
+
+    return sb.toString();
+}
 
 }

@@ -9,5 +9,5 @@ package enums;
  * @author crist
  */
 public enum MetodoPago {
-    EFECTIVO, TARJETA, TRANSFERENCIA
+    EFECTIVO, TARJETA, TRANSFERENCIA, CONSUMO_EMP1, CONSUMO_EMP2, CONSUMO_EMP3, CONSUMO_ADMIN
 }

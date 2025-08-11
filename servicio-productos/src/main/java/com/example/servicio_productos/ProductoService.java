@@ -89,8 +89,4 @@ public class ProductoService {
             throw new RuntimeException("Error al generar el PDF", e);
         }
     }
-    
-    public List<Producto> obtenerPorCategoria(String nombreCategoria) {
-        return productoRepository.findByCategoriaIgnoreCase(nombreCategoria);
-    }
 }

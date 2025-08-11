@@ -23,5 +23,4 @@ import java.util.stream.Collectors;
 
 @Repository
 public interface ProductoRepository extends MongoRepository<clases.Producto, String> {
-    List<Producto> findByCategoriaIgnoreCase(String categoria);
 }
